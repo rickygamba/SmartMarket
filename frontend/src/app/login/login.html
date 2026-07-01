@@ -1,0 +1,58 @@
+<div class="page">
+    <div class="container">
+  
+      <div class="left">
+        <h1>SmartMarket</h1>
+        <p>Gestisci la tua spesa e il tuo saldo in modo smart, veloce e sicuro.</p>
+        <ul>
+          <li>✓ Monitoraggio del saldo in tempo reale</li>
+          <li>✓ Transazioni sicure e crittografate</li>
+          <li>✓ Catalogo prodotti sempre aggiornato</li>
+        </ul>
+      </div>
+  
+      <div class="right">
+        <div class="card">
+          <h2>Accedi</h2>
+          <p class="subtitle">Inserisci le tue credenziali per continuare</p>
+  
+          <form (submit)="onLogin($event)">
+            <div class="input">
+              <label for="username">Username o Email</label>
+              <input
+                type="text"
+                id="username"
+                name="username"
+                required
+                [(ngModel)]="username"
+                placeholder="Inserisci il tuo username"
+              >
+            </div>
+  
+            <div class="input">
+              <label for="password">Password</label>
+              <input
+                type="password"
+                id="password"
+                name="password"
+                required
+                [(ngModel)]="password"
+                placeholder="••••••••"
+              >
+            </div>
+  
+            <button type="submit">Entra</button>
+          </form>
+  
+          <p *ngIf="errorMessage" class="error">
+            {{ errorMessage }}
+          </p>sx
+  
+          <div class="bottom">
+            <p>Non hai un account? <a href="#">Registrati</a></p>
+          </div>
+        </div>
+      </div>
+  
+    </div>
+  </div>
