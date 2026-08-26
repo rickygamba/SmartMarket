@@ -1,1 +1,149 @@
-<p>register works!</p>
+<div class="page">
+  <div class="container">
+
+    <!-- LATO SINISTRO (Info e dettagli Piattaforma) -->
+    <div class="left">
+      <h1>SmartMarket</h1>
+      <p>
+        Crea il tuo account per accedere a tutte le funzionalità della piattaforma.
+      </p>
+      <ul>
+        <li>✓ Registrazione gratuita in pochi passaggi</li>
+        <li>✓ Accesso immediato al tuo profilo personale</li>
+        <li>✓ Massima protezione dei tuoi dati</li>
+      </ul>
+    </div>
+
+    <!-- LATO DESTRO (Form Registrazione) -->
+    <div class="right">
+      <div class="card">
+        <h2>Registrati</h2>
+        <p class="subtitle">
+          Compila i campi per creare un nuovo account
+        </p>
+
+        <!-- FORM -->
+        <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" novalidate>
+
+          <!-- NOME E COGNOME -->
+          <div class="row">
+            <div class="input">
+              <label for="nome">Nome *</label>
+              <input 
+                type="text" 
+                id="nome" 
+                formControlName="nome" 
+                placeholder="Mario" 
+                autocomplete="given-name"
+              >
+              @if (f['nome'].touched && f['nome'].invalid) {
+                <small class="field-error">Inserisci il nome.</small>
+              }
+            </div>
+
+            <div class="input">
+              <label for="cognome">Cognome *</label>
+              <input 
+                type="text" 
+                id="cognome" 
+                formControlName="cognome" 
+                placeholder="Rossi" 
+                autocomplete="family-name"
+              >
+              @if (f['cognome'].touched && f['cognome'].invalid) {
+                <small class="field-error">Inserisci il cognome.</small>
+              }
+            </div>
+          </div>
+
+          <!-- EMAIL -->
+          <div class="input">
+            <label for="email">Email *</label>
+            <input 
+              type="email" 
+              id="email" 
+              formControlName="email" 
+              placeholder="mario.rossi@example.com" 
+              autocomplete="email"
+            >
+            @if (f['email'].touched && f['email'].invalid) {
+              <small class="field-error">Inserisci un indirizzo email valido.</small>
+            }
+          </div>
+
+          <!-- USERNAME -->
+          <div class="input">
+            <label for="username">Username *</label>
+            <input 
+              type="text" 
+              id="username" 
+              formControlName="username" 
+              placeholder="mario_rossi" 
+              autocomplete="username"
+            >
+            @if (f['username'].touched && f['username'].invalid) {
+              <small class="field-error">L'username deve avere almeno 3 caratteri.</small>
+            }
+          </div>
+
+          <!-- PASSWORD -->
+          <div class="input">
+            <label for="password">Password *</label>
+            <input 
+              type="password" 
+              id="password" 
+              formControlName="password" 
+              placeholder="••••••••" 
+              autocomplete="new-password"
+            >
+
+            <small class="hint">
+              Richiede almeno 6 caratteri, 1 maiuscola e 1 simbolo (!@#$%^&*...)
+            </small>
+
+            @if (f['password'].touched && f['password'].errors?.['required']) {
+              <small class="field-error">Inserisci una password.</small>
+            }
+            @if (f['password'].touched && f['password'].errors?.['minlength']) {
+              <small class="field-error">La password deve avere almeno 6 caratteri.</small>
+            }
+            @if (f['password'].touched && f['password'].errors?.['customPasswordError']) {
+              <small class="field-error">La password deve contenere almeno una maiuscola e un simbolo.</small>
+            }
+          </div>
+
+          <!-- PULSANTE DI CONFERMA -->
+          <button type="submit" [disabled]="isLoading">
+            @if (!isLoading) {
+              <span>Conferma</span>
+            } @else if (isLoading && !successMessage) {
+              <span>Registrazione in corso...</span>
+            } @else if (isLoading && successMessage) {
+              <span>Reindirizzamento...</span>
+            }
+          </button>
+
+        </form>
+
+        <!-- MESSAGGI DI NOTIFICA -->
+        @if (errorMessage) {
+          <p class="error">{{ errorMessage }}</p>
+        }
+
+        @if (successMessage) {
+          <p class="success">{{ successMessage }}</p>
+        }
+
+        <!-- LINK DI REINDIRIZZAMENTO AL LOGIN -->
+        <div class="bottom">
+          <p>
+            Hai già un account?
+            <a routerLink="/login">Accedi</a>
+          </p>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>
