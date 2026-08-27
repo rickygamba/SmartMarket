@@ -1,0 +1,100 @@
+<header class="site-header">
+
+  <div class="header-container">
+
+    <!-- LOGO -->
+    <a routerLink="/" class="brand">
+
+      <div class="brand-logo">
+        <span class="brand-logo-icon">S</span>
+      </div>
+
+      <div class="brand-text">
+        <span class="brand-name">SmartMarket</span>
+        <span class="brand-subtitle">
+          Il tuo marketplace
+        </span>
+      </div>
+
+    </a>
+
+
+    <!-- NAVIGAZIONE -->
+    <nav class="main-navigation">
+
+      <a
+        routerLink="/"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }"
+        class="nav-link">
+        Home
+      </a>
+
+      <a
+        routerLink="/catalogo"
+        routerLinkActive="active"
+        class="nav-link">
+        Catalogo
+      </a>
+
+      <a
+        routerLink="/carrello"
+        routerLinkActive="active"
+        class="nav-link">
+        Carrello
+      </a>
+
+    </nav>
+
+
+    <!-- PROFILO -->
+    <div class="header-user">
+
+      <div class="user-info">
+
+        <div class="profile-icon">
+
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg">
+
+            <circle
+              cx="12"
+              cy="8"
+              r="3.5"
+              stroke="currentColor"
+              stroke-width="1.8"
+            />
+
+            <path
+              d="M5.5 20C6.2 16.8 8.4 15 12 15C15.6 15 17.8 16.8 18.5 20"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+            />
+
+          </svg>
+
+        </div>
+
+
+        <div class="user-details">
+
+          <span class="username">
+            {{ username }}
+          </span>
+
+          <span class="balance">
+            {{ saldo | currency:'EUR':'symbol':'1.2-2' }}
+          </span>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</header>

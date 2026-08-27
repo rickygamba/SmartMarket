@@ -1,0 +1,82 @@
+<div class="page">
+  <div class="container">
+
+    <div class="left">
+      <h1>SmartMarket</h1>
+      <p>Gestisci la tua spesa e il tuo saldo in modo smart, veloce e sicuro.</p>
+      <ul>
+        <li>✓ Monitoraggio del saldo in tempo reale</li>
+        <li>✓ Transazioni sicure e crittografate</li>
+        <li>✓ Catalogo prodotti sempre aggiornato</li>
+      </ul>
+    </div>
+
+    <div class="right">
+      <div class="card">
+        <h2>Accedi</h2>
+        <p class="subtitle">Inserisci le tue credenziali per continuare</p>
+
+        <!-- FORM REATTIVO -->
+        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" novalidate>
+          
+          <div class="input">
+            <label for="identifier">Username o Email</label>
+            <input
+              type="text"
+              id="identifier"
+              formControlName="identifier"
+              placeholder="Inserisci username o email"
+              autocomplete="username"
+            >
+            @if (f['identifier'].touched && f['identifier'].invalid) {
+              <small class="field-error">Inserisci username o email.</small>
+            }
+          </div>
+
+          <div class="input">
+            <label for="password">Password</label>
+            <input
+              type="password"
+              id="password"
+              formControlName="password"
+              placeholder="••••••••"
+              autocomplete="current-password"
+            >
+            @if (f['password'].touched && f['password'].invalid) {
+              <small class="field-error">Inserisci la password.</small>
+            }
+          </div>
+
+          <button type="submit" [disabled]="isLoading">
+            @if (!isLoading) {
+              <span>Entra</span>
+            } @else if (isLoading && !successMessage) {
+              <span>Accesso in corso...</span>
+            } @else if (isLoading && successMessage) {
+              <span>Reindirizzamento...</span>
+            }
+          </button>
+        </form>
+
+        <!-- MESSAGGIO DI ERRORE -->
+        @if (errorMessage) {
+          <p class="error">
+            {{ errorMessage }}
+          </p>
+        }
+
+        <!-- MESSAGGIO DI SUCCESSO -->
+        @if (successMessage) {
+          <p class="success">
+            {{ successMessage }}
+          </p>
+        }
+
+        <div class="bottom">
+          <p>Non hai un account? <a routerLink="/register">Registrati</a></p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
