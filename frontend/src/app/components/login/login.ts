@@ -1,10 +1,10 @@
 import { Component, ChangeDetectorRef } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
 import { Router, RouterLink } from '@angular/router';
 import { catchError } from 'rxjs/operators';
 import { of } from 'rxjs';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -24,11 +24,9 @@ export class LoginComponent {
   successMessage: string = '';
   isLoading: boolean = false;
 
-  private readonly apiUrl = 'http://localhost/SmartMarket/backend/login_process.php';
-
   constructor(
     private fb: FormBuilder,
-    private http: HttpClient,
+    private authService: AuthService,
     private router: Router,
     private cdr: ChangeDetectorRef
   ) {
@@ -54,7 +52,10 @@ export class LoginComponent {
 
     this.isLoading = true;
 
-    this.http.post<any>(this.apiUrl, this.loginForm.value)
+    this.authService.login(
+      this.loginForm.value.identifier,
+      this.loginForm.value.password
+    )
       .pipe(
         catchError((err) => {
           let errorMsg = 'Credenziali non valide.';
@@ -70,10 +71,6 @@ export class LoginComponent {
         if (response.success) {
           this.successMessage = 'Accesso effettuato! Reindirizzamento...';
           
-          if (response.token) {
-            localStorage.setItem('userToken', response.token);
-          }
-
           setTimeout(() => {
             this.router.navigate(['/homepage']);
           }, 1500);

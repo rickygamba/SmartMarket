@@ -32,30 +32,14 @@ export class HeaderComponent implements OnInit {
 
   ngOnInit(): void {
 
+    this.authService.currentUser$.subscribe((user) => {
+      this.username = user?.username ?? '';
+      this.saldo = user ? Number(user.saldo) : 0;
+    });
+
     this.authService.getSession().subscribe({
 
-      next: (response) => {
-
-        if (response.success && response.user) {
-
-          this.username =
-            response.user.username;
-
-          this.saldo =
-            Number(response.user.saldo);
-
-        }
-
-      },
-
-      error: (error) => {
-
-        console.error(
-          'Errore nel recupero della sessione:',
-          error
-        );
-
-      }
+      error: () => undefined
 
     });
 
