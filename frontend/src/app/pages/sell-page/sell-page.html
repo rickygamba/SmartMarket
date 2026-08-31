@@ -1,1 +1,152 @@
-<p>sell-page works!</p>
+<div class="sell-container">
+  <div class="sell-card">
+    <h2>Vendi un articolo</h2>
+    <p class="subtitle">Metti in vendita un tuo prodotto su SmartMarket.</p>
+
+    @if (errorMessage) {
+      <div class="error-alert">
+        {{ errorMessage }}
+      </div>
+    }
+
+    <form [formGroup]="sellForm" (ngSubmit)="onSubmit()">
+      
+      <!-- UPLOAD IMMAGINE -->
+      <div class="form-group">
+        <label>Foto principale dell'articolo</label>
+        <div class="image-upload-box" (click)="fileInput.click()">
+          @if (imagePreview) {
+            <img [src]="imagePreview" alt="Anteprima" class="preview-img" />
+          } @else {
+            <div class="upload-placeholder">
+              <span class="upload-icon">📷</span>
+              <span>Clicca per caricare un'immagine</span>
+            </div>
+          }
+        </div>
+        <input #fileInput type="file" (change)="onFileSelected($event)" accept="image/*" style="display: none;" />
+      </div>
+
+      <!-- TITOLO -->
+      <div class="form-group">
+        <label for="titolo">Titolo dell'annuncio</label>
+        <input 
+          id="titolo" 
+          type="text" 
+          formControlName="titolo" 
+          placeholder="es. Giacca in pelle nera"
+          [class.input-invalid]="sellForm.get('titolo')?.invalid && sellForm.get('titolo')?.touched" />
+        
+        @if (sellForm.get('titolo')?.invalid && sellForm.get('titolo')?.touched) {
+          <span class="input-error-msg">
+            @if (sellForm.get('titolo')?.errors?.['required']) { Il titolo è obbligatorio. }
+            @if (sellForm.get('titolo')?.errors?.['minlength']) { Inserisci almeno 3 caratteri. }
+          </span>
+        }
+      </div>
+
+      <!-- DESCRIZIONE -->
+      <div class="form-group">
+        <label for="descrizione">Descrizione</label>
+        <textarea 
+          id="descrizione" 
+          formControlName="descrizione" 
+          rows="4" 
+          placeholder="Inserisci tutti i dettagli del prodotto..."
+          [class.input-invalid]="sellForm.get('descrizione')?.invalid && sellForm.get('descrizione')?.touched"></textarea>
+        
+        @if (sellForm.get('descrizione')?.invalid && sellForm.get('descrizione')?.touched) {
+          <span class="input-error-msg">
+            @if (sellForm.get('descrizione')?.errors?.['required']) { La descrizione è obbligatoria. }
+            @if (sellForm.get('descrizione')?.errors?.['minlength']) { Inserisci almeno 10 caratteri. }
+          </span>
+        }
+      </div>
+
+      <!-- CATEGORIA E CONDIZIONE -->
+      <div class="form-row">
+        <div class="form-group">
+          <label for="categoria">Categoria</label>
+          <select 
+            id="categoria" 
+            formControlName="categoria"
+            [class.input-invalid]="sellForm.get('categoria')?.invalid && sellForm.get('categoria')?.touched">
+            <option value="" disabled selected>Seleziona...</option>
+            @for (cat of categories; track cat) {
+              <option [value]="cat">{{ cat }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="condizione">Stato/Condizione</label>
+          <select 
+            id="condizione" 
+            formControlName="condizione"
+            [class.input-invalid]="sellForm.get('condizione')?.invalid && sellForm.get('condizione')?.touched">
+            <option value="" disabled selected>Seleziona...</option>
+            @for (cond of conditions; track cond) {
+              <option [value]="cond">{{ cond }}</option>
+            }
+          </select>
+        </div>
+      </div>
+
+      <!-- PREZZO E QUANTITÀ -->
+      <div class="form-row">
+        <div class="form-group">
+          <label for="prezzo">Prezzo (€)</label>
+          <input 
+            id="prezzo" 
+            type="number" 
+            step="0.01" 
+            formControlName="prezzo" 
+            placeholder="0.00"
+            [class.input-invalid]="sellForm.get('prezzo')?.invalid && sellForm.get('prezzo')?.touched" />
+        </div>
+
+        <div class="form-group">
+          <label for="quantita">Quantità</label>
+          <input 
+            id="quantita" 
+            type="number" 
+            formControlName="quantita" 
+            min="1"
+            [class.input-invalid]="sellForm.get('quantita')?.invalid && sellForm.get('quantita')?.touched" />
+        </div>
+      </div>
+
+      <!-- ANIMAZIONE CARICAMENTO AI -->
+      @if (isAiAnalyzing) {
+        <div class="ai-loader-box">
+          <div class="ai-loader-header">
+            <span class="ai-icon">✨</span>
+            <span>Verifica della foto e descrizione in corso...</span>
+          </div>
+          <div class="progress-bar-container">
+            <div class="progress-bar-fill"></div>
+          </div>
+        </div>
+      }
+
+      <!-- SCHEDA DI RISULTATO DELL'ANALISI AI -->
+      @if (aiFeedback) {
+        <div class="ai-feedback-box" [class.success]="aiFeedback.success" [class.error]="!aiFeedback.success">
+          <div class="feedback-title">
+            <span>{{ aiFeedback.success ? '🤖 AI Verifica: Approvato' : '🤖 AI Verifica: Rifiutato' }}</span>
+            @if (aiFeedback.confidenza) {
+              <span class="badge">{{ aiFeedback.confidenza }}% confidenza</span>
+            }
+          </div>
+          <p class="feedback-msg">{{ aiFeedback.message }}</p>
+        </div>
+      }
+
+      <!-- SUBMIT -->
+      <button type="submit" class="btn-submit" [disabled]="sellForm.invalid || !selectedFile || isSubmitting">
+        {{ isSubmitting ? 'Verifica in corso...' : 'Pubblica Articolo' }}
+      </button>
+
+    </form>
+  </div>
+</div>
