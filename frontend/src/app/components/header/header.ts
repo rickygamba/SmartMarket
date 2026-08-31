@@ -2,7 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   RouterLink,
-  RouterLinkActive
+  RouterLinkActive,
+  Router
 } from '@angular/router';
 
 import {
@@ -25,9 +26,11 @@ export class HeaderComponent implements OnInit {
 
   username = '';
   saldo = 0;
+  isProfileMenuOpen = false;
 
   constructor(
-    private authService: AuthService
+    private authService: AuthService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -43,5 +46,16 @@ export class HeaderComponent implements OnInit {
 
     });
 
+  }
+
+  toggleProfileMenu(): void {
+    this.isProfileMenuOpen = !this.isProfileMenuOpen;
+  }
+
+  logout(): void {
+    this.authService.logout().subscribe({
+      next: () => this.router.navigate(['/login']),
+      error: () => this.router.navigate(['/login'])
+    });
   }
 }

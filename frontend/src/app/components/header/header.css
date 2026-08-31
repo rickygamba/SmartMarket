@@ -212,6 +212,8 @@
 
   display: flex;
   align-items: center;
+
+  position: relative;
 }
 
 
@@ -228,6 +230,9 @@
   border-radius: 12px;
 
   background: #ffffff;
+
+  font: inherit;
+  cursor: pointer;
 
   transition:
     border-color 0.2s ease,
@@ -428,4 +433,63 @@
     margin-left: auto;
   }
 
+}
+
+
+.profile-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  min-width: 140px;
+  padding: 6px;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.12);
+}
+
+
+.logout-button {
+  width: 100%;
+  padding: 9px 12px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: #b91c1c;
+  text-align: left;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+
+.logout-button:hover {
+  background: #fef2f2;
+}
+.btn-sell {
+  background: linear-gradient(135deg, #4f46e5, #4338ca);
+  color: #ffffff !important;
+  font-weight: 600;
+  padding: 9px 16px;
+  border-radius: 8px;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  box-shadow: 0 4px 10px rgba(79, 70, 229, 0.2);
+  transition: background-color 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
+}
+
+.btn-sell:hover {
+  background: linear-gradient(135deg, #4338ca, #3730a3);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 14px rgba(79, 70, 229, 0.3);
+}
+
+.plus-icon {
+  font-size: 1.1rem;
+  font-weight: 700;
+  line-height: 1;
 }

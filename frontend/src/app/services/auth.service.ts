@@ -70,4 +70,14 @@ export class AuthService {
     );
 
   }
+
+  logout(): Observable<{ success: boolean; message: string }> {
+    return this.http.post<{ success: boolean; message: string }>(
+      `${this.apiUrl}/logout.php`,
+      {},
+      { withCredentials: true }
+    ).pipe(
+      tap(() => this.currentUserSubject.next(null))
+    );
+  }
 }
