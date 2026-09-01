@@ -1,11 +1,30 @@
 <?php
 
 // ============================================================
-// SESSIONE
+// CONFIGURAZIONE COOKIE DI SESSIONE (Prima di session_start)
 // ============================================================
+session_set_cookie_params([
+    'lifetime' => 3600,  // 1 ora di timeout
+    'path' => '/',
+    'domain' => '',  // Vuoto per localhost/singolo dominio
+    'secure' => false,  // false per localhost, true per HTTPS production
+    'httponly' => true,
+    'samesite' => 'Lax'
+]);
 
+ini_set('session.gc_maxlifetime', 3600);  // Allineato al lifetime
 session_start();
 
+// ============================================================
+// RINNOVAMENTO SESSIONE
+// ============================================================
+if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity'] > 3600)) {
+    session_destroy();
+    $loggedIn = false;
+    $user = null;
+} else if (isset($_SESSION['last_activity'])) {
+    $_SESSION['last_activity'] = time();
+}
 
 // ============================================================
 // CORS
@@ -14,7 +33,7 @@ session_start();
 header("Access-Control-Allow-Origin: http://localhost:4200");
 header("Access-Control-Allow-Credentials: true");
 header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
-header("Access-Control-Allow-Methods: GET, OPTIONS");
+header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
 header("Content-Type: application/json; charset=UTF-8");
 
 
@@ -135,6 +154,9 @@ try {
     // ========================================================
     // RISPOSTA UTENTE AUTENTICATO
     // ========================================================
+
+    // Rinnovamento della sessione per utente autenticato
+    $_SESSION['last_activity'] = time();
 
     echo json_encode([
         "success" => true,

@@ -1,13 +1,16 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   Router,
   RouterOutlet,
   NavigationEnd
 } from '@angular/router';
-import { filter } from 'rxjs/operators';
+// Importa interval e Subject da 'rxjs', mentre filter e takeUntil da 'rxjs/operators'
+import { interval, Subject } from 'rxjs';
+import { filter, takeUntil } from 'rxjs/operators';
 
 import { HeaderComponent } from './components/header/header';
+import { AuthService } from './services/auth.service';
 
 @Component({
   selector: 'app-root',
@@ -20,13 +23,18 @@ import { HeaderComponent } from './components/header/header';
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })
-export class AppComponent {
+export class AppComponent implements OnInit, OnDestroy {
 
   title = 'SmartMarket';
 
   showHeader = true;
 
-  constructor(private router: Router) {
+  private destroy$ = new Subject<void>();
+
+  constructor(
+    private router: Router,
+    private authService: AuthService
+  ) {
 
     // Controlla subito la rotta iniziale
     this.updateHeaderVisibility(this.router.url);
@@ -46,6 +54,23 @@ export class AppComponent {
         );
 
       });
+  }
+
+  ngOnInit(): void {
+    // Verifica la sessione all'avvio
+    this.authService.getSession().subscribe();
+
+    // Refresh della sessione ogni 30 minuti per mantenere viva la sessione
+    interval(30 * 60 * 1000)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        this.authService.getSession().subscribe();
+      });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
 

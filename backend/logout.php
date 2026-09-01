@@ -1,5 +1,18 @@
 <?php
 
+// =====================================================
+// CONFIGURAZIONE COOKIE DI SESSIONE (Prima di session_start)
+// =====================================================
+session_set_cookie_params([
+    'lifetime' => 3600,  // 1 ora di timeout
+    'path' => '/',
+    'domain' => '',  // Vuoto per localhost/singolo dominio
+    'secure' => false,  // false per localhost, true per HTTPS production
+    'httponly' => true,
+    'samesite' => 'Lax'
+]);
+
+ini_set('session.gc_maxlifetime', 3600);  // Allineato al lifetime
 session_start();
 
 header("Access-Control-Allow-Origin: http://localhost:4200");

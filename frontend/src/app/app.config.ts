@@ -8,12 +8,16 @@ import {
 } from '@angular/router';
 
 import {
-  provideHttpClient
+  provideHttpClient,
+  withInterceptors,
+  HTTP_INTERCEPTORS
 } from '@angular/common/http';
 
 import {
   routes
 } from './app.routes';
+
+import { AuthInterceptor } from './interceptors/auth.interceptor';
 
 
 export const appConfig: ApplicationConfig = {
@@ -24,7 +28,15 @@ export const appConfig: ApplicationConfig = {
 
     provideRouter(routes),
 
-    provideHttpClient()
+    provideHttpClient(
+      withInterceptors([])
+    ),
+
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthInterceptor,
+      multi: true
+    }
 
   ]
 

@@ -4,15 +4,28 @@
 // CONFIGURAZIONE COOKIE DI SESSIONE (Prima di session_start)
 // =====================================================
 session_set_cookie_params([
-    'lifetime' => 0,
+    'lifetime' => 3600,  // 1 ora di timeout
     'path' => '/',
-    'domain' => 'localhost',
-    'secure' => false,
+    'domain' => '',  // Vuoto per localhost/singolo dominio
+    'secure' => false,  // false per localhost, true per HTTPS production
     'httponly' => true,
     'samesite' => 'Lax'
 ]);
 
+ini_set('session.gc_maxlifetime', 3600);  // Allineato al lifetime
 session_start();
+
+// Rinnovamento della sessione
+if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity'] > 3600)) {
+    session_destroy();
+    http_response_code(401);
+    echo json_encode([
+        "success" => false,
+        "message" => "Sessione scaduta. Accedi di nuovo."
+    ]);
+    exit();
+}
+$_SESSION['last_activity'] = time();
 
 // =====================================================
 // CONFIGURAZIONE CORS
