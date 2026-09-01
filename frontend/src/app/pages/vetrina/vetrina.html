@@ -1,0 +1,129 @@
+<div class="vetrina-container">
+
+  <div class="vetrina-header">
+
+    <h2>La tua Vetrina</h2>
+
+    <p>
+      Gestisci gli articoli che hai messo in vendita su SmartMarket.
+    </p>
+
+  </div>
+
+
+  <!-- CARICAMENTO -->
+
+  @if (isLoading) {
+
+    <div class="status-msg">
+      Caricamento dei tuoi articoli in corso...
+    </div>
+
+  }
+
+
+  <!-- ERRORE -->
+
+  @if (!isLoading && errorMessage) {
+
+    <div class="error-alert">
+      {{ errorMessage }}
+    </div>
+
+  }
+
+
+  <!-- PRODOTTI -->
+
+  @if (!isLoading && !errorMessage) {
+
+    @if (prodotti.length === 0) {
+
+      <div class="empty-state">
+
+        <span class="empty-icon">
+          📦
+        </span>
+
+        <h3>
+          Non hai ancora pubblicato nessun articolo
+        </h3>
+
+        <p>
+          Inizia a vendere i tuoi prodotti inutilizzati in pochi click.
+        </p>
+
+        <a
+          routerLink="/sell"
+          class="btn-sell">
+          Metti in vendita
+        </a>
+
+      </div>
+
+    } @else {
+
+      <div class="products-grid">
+
+        @for (prod of prodotti; track prod.id) {
+
+          <div class="product-card">
+
+            <div class="card-img-wrapper">
+
+              <img
+                [src]="'http://localhost/SmartMarket/uploads/' + prod.img_principale"
+                [alt]="prod.titolo"
+              >
+
+              @if (prod.stato) {
+
+                <span class="badge-status">
+                  {{ prod.stato }}
+                </span>
+
+              }
+
+            </div>
+
+
+            <div class="card-content">
+
+              <span class="category">
+                {{ prod.categoria }}
+              </span>
+
+              <h3 class="title">
+                {{ prod.titolo }}
+              </h3>
+
+              <p class="description">
+                {{ prod.descrizione }}
+              </p>
+
+
+              <div class="card-footer">
+
+                <span class="price">
+                  €{{ prod.prezzo }}
+                </span>
+
+                <span class="quantity">
+                  Qta: {{ prod.quantita }}
+                </span>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        }
+
+      </div>
+
+    }
+
+  }
+
+</div>

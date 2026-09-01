@@ -1,15 +1,27 @@
 <?php
 
+// ============================================================
+// SESSIONE
+// ============================================================
+
 session_start();
 
-// Gestione CORS e intestazioni JSON
+
+// ============================================================
+// CORS
+// ============================================================
+
 header("Access-Control-Allow-Origin: http://localhost:4200");
 header("Access-Control-Allow-Credentials: true");
 header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
 header("Access-Control-Allow-Methods: POST, OPTIONS");
 header("Content-Type: application/json; charset=UTF-8");
 
-// Risposta alle richieste OPTIONS
+
+// ============================================================
+// OPTIONS
+// ============================================================
+
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(200);
     exit();
@@ -17,7 +29,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 
 
 // ============================================================
-// CONNESSIONE DATABASE
+// CONTROLLO METODO
+// ============================================================
+
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+
+    http_response_code(405);
+
+    echo json_encode([
+        "success" => false,
+        "message" => "Metodo HTTP non consentito."
+    ]);
+
+    exit();
+}
+
+
+// ============================================================
+// DATABASE
 // ============================================================
 
 $host = "localhost";
@@ -51,7 +80,7 @@ try {
 
 
 // ============================================================
-// LETTURA DATI ANGULAR
+// DATI RICEVUTI DA ANGULAR
 // ============================================================
 
 $data = json_decode(
@@ -60,14 +89,14 @@ $data = json_decode(
 );
 
 $identifier = trim($data['identifier'] ?? '');
-$password   = trim($data['password'] ?? '');
+$password = $data['password'] ?? '';
 
 
 // ============================================================
 // VALIDAZIONE
 // ============================================================
 
-if (empty($identifier) || empty($password)) {
+if ($identifier === '' || $password === '') {
 
     http_response_code(400);
 
@@ -109,15 +138,12 @@ $user = $stmt->fetch();
 
 
 // ============================================================
-// VERIFICA CREDENZIALI
+// CONTROLLO PASSWORD
 // ============================================================
 
 if (
     !$user ||
-    !password_verify(
-        $password,
-        $user['password']
-    )
+    !password_verify($password, $user['password'])
 ) {
 
     http_response_code(401);
@@ -137,8 +163,16 @@ if (
 
 session_regenerate_id(true);
 
-$_SESSION['user_id'] = $user['id'];
+$_SESSION['user_id'] = (int) $user['id'];
 $_SESSION['username'] = $user['username'];
+
+
+// ============================================================
+// CHIUSURA SESSIONE
+// ============================================================
+
+// Salviamo i dati della sessione
+session_write_close();
 
 
 // ============================================================
@@ -149,16 +183,23 @@ unset($user['password']);
 
 
 // ============================================================
-// RISPOSTA
+// NORMALIZZAZIONE DATI
 // ============================================================
 
-http_response_code(200);
+$user['id'] = (int) $user['id'];
+$user['saldo'] = (float) $user['saldo'];
+
+
+// ============================================================
+// RISPOSTA
+// ============================================================
 
 echo json_encode([
     "success" => true,
     "message" => "Login effettuato con successo!",
     "user" => $user
-]);
+], JSON_UNESCAPED_UNICODE);
 
 exit();
+
 ?>

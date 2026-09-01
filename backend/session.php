@@ -1,13 +1,26 @@
 <?php
 
+// ============================================================
+// SESSIONE
+// ============================================================
+
 session_start();
+
+
+// ============================================================
+// CORS
+// ============================================================
 
 header("Access-Control-Allow-Origin: http://localhost:4200");
 header("Access-Control-Allow-Credentials: true");
-header("Access-Control-Allow-Headers: Content-Type");
+header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
 header("Access-Control-Allow-Methods: GET, OPTIONS");
 header("Content-Type: application/json; charset=UTF-8");
 
+
+// ============================================================
+// OPTIONS
+// ============================================================
 
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(200);
@@ -19,18 +32,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 // CONTROLLO SESSIONE
 // ============================================================
 
-if (!isset($_SESSION['user_id'])) {
-
-    http_response_code(401);
+if (!isset($_SESSION['user_id']) || empty($_SESSION['user_id'])) {
 
     echo json_encode([
-        "success" => false,
+        "success" => true,
         "loggedIn" => false,
+        "user" => null,
         "message" => "Utente non autenticato."
     ]);
 
     exit();
 }
+
+
+$id_utente = (int) $_SESSION['user_id'];
 
 
 // ============================================================
@@ -60,6 +75,7 @@ try {
 
     echo json_encode([
         "success" => false,
+        "loggedIn" => false,
         "message" => "Errore di connessione al database."
     ]);
 
@@ -68,56 +84,81 @@ try {
 
 
 // ============================================================
-// RECUPERO UTENTE DAL DATABASE
+// RECUPERO UTENTE
 // ============================================================
 
-$sql = "
-    SELECT
-        id,
-        nome,
-        cognome,
-        username,
-        email,
-        saldo
-    FROM utenti
-    WHERE id = :id
-    LIMIT 1
-";
+try {
 
-$stmt = $pdo->prepare($sql);
+    $sql = "
+        SELECT
+            id,
+            nome,
+            cognome,
+            username,
+            email,
+            saldo
+        FROM utenti
+        WHERE id = :id
+        LIMIT 1
+    ";
 
-$stmt->execute([
-    ':id' => $_SESSION['user_id']
-]);
+    $stmt = $pdo->prepare($sql);
 
-$user = $stmt->fetch();
+    $stmt->execute([
+        ':id' => $id_utente
+    ]);
+
+    $user = $stmt->fetch();
 
 
-if (!$user) {
+    // ========================================================
+    // UTENTE NON TROVATO
+    // ========================================================
 
-    session_destroy();
+    if (!$user) {
 
-    http_response_code(401);
+        // La sessione contiene un ID che non esiste più nel DB
+        session_unset();
+        session_destroy();
+
+        echo json_encode([
+            "success" => true,
+            "loggedIn" => false,
+            "user" => null,
+            "message" => "Utente non trovato."
+        ]);
+
+        exit();
+    }
+
+
+    // ========================================================
+    // RISPOSTA UTENTE AUTENTICATO
+    // ========================================================
+
+    echo json_encode([
+        "success" => true,
+        "loggedIn" => true,
+        "user" => [
+            "id" => (int) $user['id'],
+            "nome" => $user['nome'],
+            "cognome" => $user['cognome'],
+            "username" => $user['username'],
+            "email" => $user['email'],
+            "saldo" => (float) $user['saldo']
+        ]
+    ]);
+
+} catch (PDOException $e) {
+
+    http_response_code(500);
 
     echo json_encode([
         "success" => false,
         "loggedIn" => false,
-        "message" => "Utente non trovato."
+        "message" => "Errore durante il recupero dell'utente."
     ]);
-
-    exit();
 }
-
-
-// ============================================================
-// RISPOSTA
-// ============================================================
-
-echo json_encode([
-    "success" => true,
-    "loggedIn" => true,
-    "user" => $user
-]);
 
 exit();
 ?>

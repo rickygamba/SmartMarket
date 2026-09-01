@@ -3,6 +3,7 @@ import { LoginComponent } from './pages/login/login';
 import { RegisterComponent } from './pages/register/register'; 
 import { HomepageComponent } from './pages/homepage/homepage';
 import { SellPage } from './pages/sell-page/sell-page';
+import { Vetrina } from './pages/vetrina/vetrina';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -10,5 +11,6 @@ export const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
   {path: 'homepage', component: HomepageComponent},
-  { path: 'vendi', component: SellPage } 
+  { path: 'vendi', component: SellPage },
+  {path: 'vetrina', component: Vetrina},
 ];
