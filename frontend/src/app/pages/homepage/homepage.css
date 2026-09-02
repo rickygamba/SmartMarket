@@ -1,11 +1,16 @@
+:host {
+  display: block;
+  width: 100%;
+}
+
 /* ============================================================
-   CONTAINER PRINCIPALE (Centrato con padding bilanciato)
+   CONTAINER PRINCIPALE
    ============================================================ */
 .homepage-container {
   width: 100%;
   max-width: 1280px;
   margin: 0 auto;
-  padding: 40px 24px 80px 24px; /* Aggiunge rientro interno sinistro e destro */
+  padding: 40px 24px 80px 24px;
   box-sizing: border-box;
 }
 
@@ -14,7 +19,7 @@
    ============================================================ */
 .vetrina-header {
   text-align: left;
-  margin-bottom: 32px;
+  margin-bottom: 24px;
 }
 
 .header-title-group {
@@ -46,13 +51,91 @@
 }
 
 /* ============================================================
-   GRID PRODOTTI (Dimensione bilanciata e responsive)
+   BARRA DEI FILTRI
+   ============================================================ */
+.filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 16px;
+  background: #ffffff;
+  padding: 18px 20px;
+  border-radius: 14px;
+  border: 1px solid #e2e8f0;
+  margin-bottom: 32px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+  min-width: 180px;
+}
+
+.filter-group label {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #475569;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.filter-group input,
+.filter-group select {
+  padding: 10px 14px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  color: #0f172a;
+  background-color: #ffffff;
+  outline: none;
+  height: 42px;
+  box-sizing: border-box;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.filter-group select {
+  cursor: pointer;
+}
+
+.filter-group input:focus,
+.filter-group select:focus {
+  border-color: #4f46e5;
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
+}
+
+.btn-reset {
+  background-color: #f1f5f9;
+  color: #475569;
+  border: 1px solid #cbd5e1;
+  padding: 0 16px;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  height: 42px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.btn-reset:hover {
+  background-color: #e2e8f0;
+  color: #0f172a;
+}
+
+/* ============================================================
+   GRID PRODOTTI
    ============================================================ */
 .products-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 300px)); /* Limita la larghezza massima delle card */
+  grid-template-columns: repeat(auto-fill, minmax(260px, 300px));
   gap: 24px;
-  justify-content: start; /* Allinea le card partendo da sinistra con margine interno */
+  justify-content: start;
 }
 
 .product-card {
@@ -74,7 +157,7 @@
 .card-img-wrapper {
   position: relative;
   width: 100%;
-  padding-top: 70%; /* Aspect ratio proporzionato */
+  padding-top: 70%;
   background-color: #f8fafc;
   overflow: hidden;
 }
@@ -157,7 +240,7 @@
   min-height: 2.6em;
 }
 
-/* FOOTER CARD (PREZZO & TASTO AGGIUNGI) */
+/* FOOTER CARD */
 .card-footer {
   margin-top: auto;
   display: flex;
@@ -204,7 +287,9 @@
   box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25);
 }
 
-/* STATI CARICAMENTO / ERRORE / VUOTO */
+/* ============================================================
+   STATI CARICAMENTO / ERRORE / VUOTO
+   ============================================================ */
 .state-card {
   background: #ffffff;
   border: 1px solid #e2e8f0;

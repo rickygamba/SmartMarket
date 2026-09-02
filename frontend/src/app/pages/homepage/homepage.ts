@@ -11,7 +11,7 @@ export interface ProdottoHome {
   descrizione: string;
   prezzo: number;
   categoria: string;
-  stato: string;
+  stato: string; // Rappresenta le condizioni del prodotto (es. Nuovo, Come nuovo, Usato)
   img_principale: string;
   quantita: number;
   venditore: string;
@@ -36,12 +36,14 @@ export class Homepage implements OnInit, OnDestroy {
   isLoading = true;
   errorMessage = '';
 
-  // LISTA CATEGORIE
+  // LISTE DROPDOWN
   categories = ['Abbigliamento', 'Scarpe', 'Elettronica', 'Casa', 'Accessori', 'Altro'];
+  condizioni = ['Nuovo', 'Come Nuovo', 'Buone Condizioni', 'Usato'];
 
   // FILTRI DINAMICI
   filtroTitolo: string = '';
   filtroCategoria: string = '';
+  filtroStato: string = ''; // Nuovo filtro condizione
   filtroPrezzoMax: number | null = null;
 
   private readonly apiUrl = 'http://localhost/SmartMarket/backend/get_all_products.php';
@@ -108,7 +110,11 @@ export class Homepage implements OnInit, OnDestroy {
       const matchCategoria = !this.filtroCategoria || 
         prod.categoria.toLowerCase() === this.filtroCategoria.toLowerCase();
 
-      // 3. Filtro Prezzo Max (con conversione esplicita a Number)
+      // 3. Filtro Condizioni / Stato
+      const matchStato = !this.filtroStato || 
+        prod.stato.toLowerCase() === this.filtroStato.toLowerCase();
+
+      // 4. Filtro Prezzo Max
       const prezzoMax = (this.filtroPrezzoMax !== null && this.filtroPrezzoMax !== undefined && (this.filtroPrezzoMax as any) !== '') 
         ? Number(this.filtroPrezzoMax) 
         : null;
@@ -116,13 +122,14 @@ export class Homepage implements OnInit, OnDestroy {
       const prodPrezzo = Number(prod.prezzo);
       const matchPrezzo = prezzoMax === null || isNaN(prezzoMax) || prodPrezzo <= prezzoMax;
 
-      return matchTitolo && matchCategoria && matchPrezzo;
+      return matchTitolo && matchCategoria && matchStato && matchPrezzo;
     });
   }
 
   resetFiltri(): void {
     this.filtroTitolo = '';
     this.filtroCategoria = '';
+    this.filtroStato = '';
     this.filtroPrezzoMax = null;
   }
 

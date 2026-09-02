@@ -11,7 +11,7 @@
     <p>Scopri gli articoli messi in vendita dalla community di SmartMarket.</p>
   </div>
 
-  <!-- SEZIONE FILTRI CON SELECT CATEGORIA -->
+  <!-- BARRA FILTRI -->
   @if (!isLoading && !errorMessage) {
     <div class="filter-bar">
       
@@ -25,15 +25,24 @@
           [(ngModel)]="filtroTitolo">
       </div>
 
-      <!-- CATEGORIA (SELECT) -->
+      <!-- CATEGORIA -->
       <div class="filter-group">
         <label for="filtro-categoria">Categoria</label>
-        <select 
-          id="filtro-categoria" 
-          [(ngModel)]="filtroCategoria">
+        <select id="filtro-categoria" [(ngModel)]="filtroCategoria">
           <option value="">Tutte le categorie</option>
           @for (cat of categories; track cat) {
             <option [value]="cat">{{ cat }}</option>
+          }
+        </select>
+      </div>
+
+      <!-- CONDIZIONI -->
+      <div class="filter-group">
+        <label for="filtro-stato">Condizione</label>
+        <select id="filtro-stato" [(ngModel)]="filtroStato">
+          <option value="">Tutte le condizioni</option>
+          @for (cond of condizioni; track cond) {
+            <option [value]="cond">{{ cond }}</option>
           }
         </select>
       </div>
@@ -46,6 +55,7 @@
           type="number" 
           placeholder="Es. 50" 
           min="0" 
+          step="0.01"
           [(ngModel)]="filtroPrezzoMax">
       </div>
 
@@ -56,7 +66,7 @@
     </div>
   }
 
-  <!-- STATI E GRID PRODOTTI -->
+  <!-- STATI DI CARICAMENTO / ERRORE -->
   @if (isLoading) {
     <div class="state-card loading-state">
       <div class="spinner"></div>
@@ -74,6 +84,7 @@
     </div>
   }
 
+  <!-- LISTA PRODOTTI -->
   @if (!isLoading && !errorMessage) {
 
     @if (prodottiFiltrati.length === 0) {
@@ -96,8 +107,9 @@
                 [alt]="prod.titolo"
                 loading="lazy"
               >
+              <!-- BADGE IN ALTO A DESTRA SULL'IMMAGINE -->
               @if (prod.stato) {
-                <span class="badge-status" [ngClass]="'status-' + prod.stato.toLowerCase()">
+                <span class="badge-status">
                   {{ prod.stato }}
                 </span>
               }
@@ -108,7 +120,10 @@
             </div>
 
             <div class="card-content">
-              <span class="category-tag">{{ prod.categoria }}</span>
+              <div class="card-tags">
+                <span class="category-tag">{{ prod.categoria }}</span>
+              </div>
+
               <h3 class="title" [title]="prod.titolo">{{ prod.titolo }}</h3>
               <p class="description">{{ prod.descrizione }}</p>
 
