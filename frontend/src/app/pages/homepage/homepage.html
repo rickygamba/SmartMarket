@@ -1,11 +1,137 @@
 <div class="homepage-container">
-  <div class="hero-section">
-    <h1>Benvenuto in SmartMarket!</h1>
-    <p>La tua spesa a portata di click, veloce e conveniente.</p>
 
-    <div class="actions">
-      <a routerLink="/catalogo" class="btn btn-primary">Sfoglia Catalogo</a>
-      <a routerLink="/login" class="btn btn-secondary">Accedi al Profilo</a>
+  <!-- HEADER CATALOGO -->
+  <div class="vetrina-header">
+    <div class="header-title-group">
+      <h2>Esplora il Marketplace</h2>
+      @if (!isLoading && !errorMessage) {
+        <span class="badge-count">{{ prodottiFiltrati.length }} di {{ prodotti.length }} prodotti</span>
+      }
     </div>
+    <p>Scopri gli articoli messi in vendita dalla community di SmartMarket.</p>
   </div>
+
+  <!-- SEZIONE FILTRI CON SELECT CATEGORIA -->
+  @if (!isLoading && !errorMessage) {
+    <div class="filter-bar">
+      
+      <!-- TITOLO -->
+      <div class="filter-group">
+        <label for="filtro-titolo">Titolo</label>
+        <input 
+          id="filtro-titolo"
+          type="text" 
+          placeholder="Cerca per titolo..." 
+          [(ngModel)]="filtroTitolo">
+      </div>
+
+      <!-- CATEGORIA (SELECT) -->
+      <div class="filter-group">
+        <label for="filtro-categoria">Categoria</label>
+        <select 
+          id="filtro-categoria" 
+          [(ngModel)]="filtroCategoria">
+          <option value="">Tutte le categorie</option>
+          @for (cat of categories; track cat) {
+            <option [value]="cat">{{ cat }}</option>
+          }
+        </select>
+      </div>
+
+      <!-- PREZZO MAX -->
+      <div class="filter-group">
+        <label for="filtro-prezzo">Prezzo Max (€)</label>
+        <input 
+          id="filtro-prezzo"
+          type="number" 
+          placeholder="Es. 50" 
+          min="0" 
+          [(ngModel)]="filtroPrezzoMax">
+      </div>
+
+      <button class="btn-reset" (click)="resetFiltri()" title="Resetta Filtri">
+        🔄 Pulisci
+      </button>
+
+    </div>
+  }
+
+  <!-- STATI E GRID PRODOTTI -->
+  @if (isLoading) {
+    <div class="state-card loading-state">
+      <div class="spinner"></div>
+      <p>Caricamento del catalogo prodotti...</p>
+    </div>
+  }
+
+  @if (!isLoading && errorMessage) {
+    <div class="state-card error-alert">
+      <div class="alert-icon">⚠️</div>
+      <div class="alert-content">
+        <h4>Si è verificato un problema</h4>
+        <p>{{ errorMessage }}</p>
+      </div>
+    </div>
+  }
+
+  @if (!isLoading && !errorMessage) {
+
+    @if (prodottiFiltrati.length === 0) {
+      <div class="state-card empty-state">
+        <div class="empty-icon-wrapper">
+          <span class="empty-icon">🔍</span>
+        </div>
+        <h3>Nessun risultato trovato</h3>
+        <p>Prova a modificare o resettare i filtri di ricerca.</p>
+        <button class="btn-primary" (click)="resetFiltri()">Azzera Filtri</button>
+      </div>
+    } @else {
+      <div class="products-grid">
+        @for (prod of prodottiFiltrati; track prod.id) {
+          <div class="product-card">
+
+            <div class="card-img-wrapper">
+              <img
+                [src]="'http://localhost/SmartMarket/uploads/' + prod.img_principale"
+                [alt]="prod.titolo"
+                loading="lazy"
+              >
+              @if (prod.stato) {
+                <span class="badge-status" [ngClass]="'status-' + prod.stato.toLowerCase()">
+                  {{ prod.stato }}
+                </span>
+              }
+
+              <span class="seller-badge" title="Venditore">
+                👤 &#x40;{{ prod.venditore }}
+              </span>
+            </div>
+
+            <div class="card-content">
+              <span class="category-tag">{{ prod.categoria }}</span>
+              <h3 class="title" [title]="prod.titolo">{{ prod.titolo }}</h3>
+              <p class="description">{{ prod.descrizione }}</p>
+
+              <div class="card-footer">
+                <div class="price-container">
+                  <span class="currency">€</span>
+                  <span class="price-value">{{ prod.prezzo | number:'1.2-2' }}</span>
+                </div>
+
+                <button 
+                  class="btn-cart" 
+                  (click)="aggiungiAlCarrello(prod)"
+                  title="Aggiungi al carrello">
+                  🛒 Aggiungi
+                </button>
+              </div>
+            </div>
+
+          </div>
+        }
+      </div>
+    }
+
+  }
+
 </div>
