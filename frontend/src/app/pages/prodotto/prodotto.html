@@ -1,0 +1,132 @@
+<div class="product-page-container">
+
+  <!-- Spinner di caricamento -->
+  @if (loading) {
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <p>Caricamento dettaglio prodotto in corso...</p>
+    </div>
+  }
+
+  <!-- Messaggio di errore -->
+  @if (!loading && errorMessage) {
+    <div class="error-card">
+      <span class="error-icon">⚠️</span>
+      <h2>Si è verificato un problema</h2>
+      <p>{{ errorMessage }}</p>
+      <a routerLink="/" class="btn-primary">Torna alla Homepage</a>
+    </div>
+  }
+
+  <!-- Dettaglio Prodotto -->
+  @if (!loading && prodotto) {
+    <div class="product-layout">
+      
+      <!-- COLONNA SINISTRA: Carosello Immagini -->
+      <section class="gallery-section">
+        <div class="main-image-wrapper">
+          <img 
+            [src]="'http://localhost/SmartMarket/uploads/' + immagini[selectedImageIndex]" 
+            [alt]="prodotto.titolo"
+            class="main-image"
+          />
+
+          @if (immagini.length > 1) {
+            <button class="nav-btn prev" (click)="prevImage()" title="Immagine precedente">❮</button>
+            <button class="nav-btn next" (click)="nextImage()" title="Immagine successiva">❯</button>
+          }
+
+          @if (prodotto.stato) {
+            <span class="status-badge">{{ prodotto.stato }}</span>
+          }
+        </div>
+
+        <!-- Thumbnail scorrimento carosello -->
+        @if (immagini.length > 1) {
+          <div class="thumbnails-carousel">
+            @for (img of immagini; track $index) {
+              <div 
+                class="thumb-item" 
+                [class.active]="$index === selectedImageIndex"
+                (click)="selectImage($index)"
+              >
+                <img [src]="'http://localhost/SmartMarket/uploads/' + img" [alt]="prodotto.titolo" />
+              </div>
+            }
+          </div>
+        }
+      </section>
+
+      <!-- COLONNA DESTRA: Informazioni & Acquisto -->
+      <section class="details-section">
+        <div class="category-chip">{{ prodotto.categoria }}</div>
+        <h1 class="product-title">{{ prodotto.titolo }}</h1>
+
+        <div class="price-box">
+          <span class="currency">€</span>
+          <span class="price">{{ prodotto.prezzo | number:'1.2-2' }}</span>
+        </div>
+
+        <div class="actions-group">
+          <button class="btn-cart-large" (click)="aggiungiAlCarrello()">
+            🛒 Aggiungi al Carrello
+          </button>
+          <button class="btn-buy-now">
+            ⚡ Acquista Ora
+          </button>
+        </div>
+
+        <!-- Box Informazioni Venditore -->
+        <div class="seller-card">
+          <div class="seller-avatar">👤</div>
+          <div class="seller-info">
+            <span class="seller-label">Venduto da</span>
+            <strong class="seller-name">&#x40;{{ prodotto.venditore }}</strong>
+          </div>
+          <button class="btn-contact-seller">Contatta</button>
+        </div>
+
+        <!-- Vantaggi e Garanzie -->
+        <div class="trust-features">
+          <div class="feature-item">
+            <span class="feature-icon">🛡️</span>
+            <div>
+              <strong>Acquisto Sicuro</strong>
+              <p>Transazione protetta con garanzia di rimborso.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- SEZIONE INFERIORE: Descrizione estesa e Specifiche -->
+    <div class="extra-info-container">
+      <div class="info-block">
+        <h2>Descrizione Prodotto</h2>
+        <p class="description-text">{{ prodotto.descrizione }}</p>
+      </div>
+
+      <div class="info-block">
+        <h2>Dettagli e Specifiche</h2>
+        <table class="specs-table">
+          <tbody>
+            <tr>
+              <td>Condizione</td>
+              <td><strong>{{ prodotto.stato || 'Usato' }}</strong></td>
+            </tr>
+            <tr>
+              <td>Categoria</td>
+              <td><strong>{{ prodotto.categoria }}</strong></td>
+            </tr>
+            <tr>
+              <td>Codice Prodotto</td>
+              <td><strong>#{{ prodotto.id }}</strong></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  }
+
+</div>

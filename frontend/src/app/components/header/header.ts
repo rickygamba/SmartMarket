@@ -1,14 +1,14 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   RouterLink,
   RouterLinkActive,
   Router
 } from '@angular/router';
+import { Subject, takeUntil } from 'rxjs';
 
 import {
-  AuthService,
-  User
+  AuthService
 } from '../../services/auth.service';
 
 @Component({
@@ -22,11 +22,13 @@ import {
   templateUrl: './header.html',
   styleUrl: './header.css'
 })
-export class HeaderComponent implements OnInit {
+export class HeaderComponent implements OnInit, OnDestroy {
 
   username = '';
   saldo = 0;
   isProfileMenuOpen = false;
+
+  private destroy$ = new Subject<void>();
 
   constructor(
     private authService: AuthService,
@@ -34,18 +36,23 @@ export class HeaderComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.authService.currentUser$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (user) => {
+          this.username = user?.username ?? '';
+          this.saldo = user ? Number(user.saldo) || 0 : 0;
+        },
+        error: () => {
+          this.username = '';
+          this.saldo = 0;
+        }
+      });
+  }
 
-    this.authService.currentUser$.subscribe((user) => {
-      this.username = user?.username ?? '';
-      this.saldo = user ? Number(user.saldo) : 0;
-    });
-
-    this.authService.getSession().subscribe({
-
-      error: () => undefined
-
-    });
-
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   toggleProfileMenu(): void {
@@ -53,9 +60,17 @@ export class HeaderComponent implements OnInit {
   }
 
   logout(): void {
-    this.authService.logout().subscribe({
-      next: () => this.router.navigate(['/login']),
-      error: () => this.router.navigate(['/login'])
-    });
+    this.authService.logout()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: () => {
+          this.isProfileMenuOpen = false;
+          this.router.navigate(['/login']);
+        },
+        error: () => {
+          this.isProfileMenuOpen = false;
+          this.router.navigate(['/login']);
+        }
+      });
   }
 }

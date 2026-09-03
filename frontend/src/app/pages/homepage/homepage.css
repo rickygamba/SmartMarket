@@ -311,3 +311,21 @@
 @keyframes spin {
   to { transform: rotate(360deg); }
 }
+/* Effetto cursore a manina per l'immagine e il titolo cliccabili */
+.card-img-wrapper,
+.card-content .title {
+  cursor: pointer;
+}
+
+/* Opzionale: un leggero effetto zoom sull'immagine quando ci passi sopra */
+.card-img-wrapper {
+  overflow: hidden;
+}
+
+.card-img-wrapper img {
+  transition: transform 0.3s ease;
+}
+
+.card-img-wrapper:hover img {
+  transform: scale(1.05);
+}

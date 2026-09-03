@@ -101,12 +101,17 @@
         @for (prod of prodottiFiltrati; track prod.id) {
           <div class="product-card">
 
-            <div class="card-img-wrapper">
-              <img
-                [src]="'http://localhost/SmartMarket/uploads/' + prod.img_principale"
-                [alt]="prod.titolo"
-                loading="lazy"
-              >
+            <!-- Sostituisci il blocco card-img-wrapper con questo -->
+<div 
+  class="card-img-wrapper" 
+  [routerLink]="['/prodotto', prod.id]" 
+  style="cursor: pointer;"
+>
+  <img
+    [src]="'http://localhost/SmartMarket/uploads/' + prod.img_principale"
+    [alt]="prod.titolo"
+    loading="lazy"
+  >
               <!-- BADGE IN ALTO A DESTRA SULL'IMMAGINE -->
               @if (prod.stato) {
                 <span class="badge-status">
