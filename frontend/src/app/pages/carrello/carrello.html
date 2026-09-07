@@ -1,0 +1,100 @@
+<div class="cart-container">
+  <h1 class="cart-title">Il tuo Carrello 🛒</h1>
+
+  @if (elementiCarrello.length === 0) {
+    <div class="empty-cart">
+      <div class="empty-icon">📦</div>
+      <h2>Il carrello è vuoto</h2>
+      <p>Non hai ancora aggiunto prodotti al carrello.</p>
+      <a routerLink="/" class="btn-shop">Inizia lo Shopping</a>
+    </div>
+  } @else {
+    <div class="cart-layout">
+
+      <!-- COLONNA SINISTRA: Elenco prodotti nel carrello -->
+      <div class="cart-items-list">
+        @for (item of elementiCarrello; track item.id) {
+          <div class="cart-item">
+            
+            <img 
+              [src]="'http://localhost/SmartMarket/uploads/' + item.img_principale" 
+              [alt]="item.titolo" 
+              class="item-img"
+            />
+
+            <div class="item-info">
+              <span class="category-badge">{{ item.categoria }}</span>
+              <h3 class="item-title">{{ item.titolo }}</h3>
+              <p class="seller-info">Venditore: <strong>&#x40;{{ item.venditore }}</strong></p>
+              <p class="single-price">€ {{ item.prezzo | number:'1.2-2' }} ciascuno</p>
+              
+              <!-- MOSTRA DISPONIBILITÀ RESIDUA / MASSIMA -->
+              <span class="disponibility in-stock">
+                Max acquistabili: {{ item.quantita_disponibile }}
+              </span>
+            </div>
+
+            <div class="item-actions">
+              <!-- Controlli quantità -->
+              <div class="quantity-controls-wrapper">
+                <div class="quantity-controls">
+                  <button (click)="diminuisciQuantita(item)" title="Riduci">-</button>
+                  <span class="qty-number">{{ item.quantita }}</span>
+                  
+                  <!-- DISABILITATO SE RAGGIUNGE IL LIMITE -->
+                  <button 
+                    (click)="aumentaQuantita(item)" 
+                    [disabled]="item.quantita >= item.quantita_disponibile"
+                    [title]="item.quantita >= item.quantita_disponibile ? 'Disponibilità massima raggiunta' : 'Aumenta'">
+                    +
+                  </button>
+                </div>
+
+                <!-- AVVISO LIMITE RAGGIUNTO -->
+                @if (item.quantita >= item.quantita_disponibile) {
+                  <span class="max-limit-warning">⚠️ Max raggiunto</span>
+                }
+              </div>
+
+              <!-- Subtotale singolo articolo -->
+              <div class="item-subtotal">
+                € {{ (item.prezzo * item.quantita) | number:'1.2-2' }}
+              </div>
+
+              <!-- Rimuovi -->
+              <button class="btn-remove" (click)="rimuoviProdotto(item.id)" title="Rimuovi prodotto">
+                🗑️
+              </button>
+            </div>
+
+          </div>
+        }
+
+        <div class="list-footer">
+          <button class="btn-clear" (click)="svuotaCarrello()">Svuota Carrello</button>
+          <a routerLink="/homepage" class="btn-continue">← Continua gli Acquisti</a>
+        </div>
+      </div>
+
+      <!-- COLONNA DESTRA: Riepilogo prezzo -->
+      <div class="cart-summary">
+        <h2>Riepilogo Ordine</h2>
+
+        <div class="summary-row">
+          <span>Prodotti:</span>
+          <span>€ {{ totaleProdotti | number:'1.2-2' }}</span>
+        </div>
+
+        <hr class="divider" />
+
+        <div class="summary-row total-row">
+          <span>Totale Ordine:</span>
+          <span class="total-price">€ {{ totaleOrdine | number:'1.2-2' }}</span>
+        </div>
+
+        <button class="btn-checkout">Procedi al Checkout ⚡</button>
+      </div>
+
+    </div>
+  }
+</div>

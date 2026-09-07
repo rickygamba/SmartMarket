@@ -6,6 +6,7 @@ import { SellPage } from './pages/sell-page/sell-page';
 import { Vetrina } from './pages/vetrina/vetrina';
 import { AuthGuard } from './guards/auth.guard';
 import { Prodotto } from './pages/prodotto/prodotto';
+import { Carrello } from './pages/carrello/carrello';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -15,5 +16,6 @@ export const routes: Routes = [
   { path: 'homepage', component: Homepage, canActivate: [AuthGuard] },
   { path: 'vendi', component: SellPage, canActivate: [AuthGuard] },
   { path: 'vetrina', component: Vetrina, canActivate: [AuthGuard] },
-  { path: 'prodotto/:id', component: Prodotto }
+  { path: 'prodotto/:id', component: Prodotto },
+  { path: 'carrello', component: Carrello, canActivate: [AuthGuard]},
 ];

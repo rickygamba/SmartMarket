@@ -4,6 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { RouterLink, Router, NavigationEnd } from '@angular/router';
 import { Subject, filter, takeUntil } from 'rxjs';
+import { CarrelloService } from '../../services/carrello.service';
 
 export interface ProdottoHome {
   id: number;
@@ -52,7 +53,8 @@ export class Homepage implements OnInit, OnDestroy {
   constructor(
     private http: HttpClient,
     private router: Router,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private carrelloService: CarrelloService // Iniezione del CarrelloService
   ) {}
 
   ngOnInit(): void {
@@ -133,8 +135,30 @@ export class Homepage implements OnInit, OnDestroy {
     this.filtroPrezzoMax = null;
   }
 
-  aggiungiAlCarrello(prodotto: ProdottoHome): void {
-    console.log('Aggiunto al carrello:', prodotto);
-    alert(`"${prodotto.titolo}" aggiunto al carrello!`);
+aggiungiAlCarrello(prodotto: ProdottoHome): void {
+    const aggiunto = this.carrelloService.aggiungiProdotto(prodotto);
+    
+    if (aggiunto) {
+      // Alert rimosso o sostituito con una notifica meno invasiva (toast)
+      console.log(`"${prodotto.titolo}" aggiunto.`);
+      // alert(`"${prodotto.titolo}" aggiunto al carrello!`); // Opzionale
+    }
+    // Se 'aggiunto' è false, il servizio ha già mostrato l'alert del blocco.
+  }
+
+  // --- NUOVO: Metodo per controllare se disabilitare il tasto nell'HTML ---
+  isMaxRaggiunto(prodotto: ProdottoHome): boolean {
+    // Se esaurito a magazzino, blocco subito
+    if (prodotto.quantita <= 0) return true;
+
+    // Controllo se è già nel carrello
+    const itemInCarrello = this.carrelloService.getInCarrello(prodotto.id);
+    
+    // Se è nel carrello, controllo se la qty nel carrello ha raggiunto la qty di magazzino
+    if (itemInCarrello) {
+      return itemInCarrello.quantita >= prodotto.quantita;
+    }
+
+    return false;
   }
 }

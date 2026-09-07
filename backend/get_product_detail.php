@@ -59,10 +59,6 @@ $result = $stmt->get_result();
 if ($row = $result->fetch_assoc()) {
     $baseUrl = "http://localhost/smartmarket/uploads/";
     $image_filename = $row["img_principale"];
-    
-    $image_url = (strpos($image_filename, 'http') === 0) 
-        ? $image_filename 
-        : $baseUrl . $image_filename;
 
     $prodotto = [
         "id"             => (int) $row["id"],
@@ -72,7 +68,7 @@ if ($row = $result->fetch_assoc()) {
         "categoria"      => $row["categoria"],
         "stato"          => $row["stato"],
         "confidenza_ai"  => (float) ($row["confidenza_ai"] ?? 0),
-        "img_principale" => $image_url,
+        "img_principale" => $image_filename,
         "quantita"       => (int) $row["quantita"],
         "id_venditore"   => (int) $row["id_venditore"],
         "venditore"      => $row["venditore"]

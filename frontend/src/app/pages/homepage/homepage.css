@@ -329,3 +329,32 @@
 .card-img-wrapper:hover img {
   transform: scale(1.05);
 }
+/* Classe disponibilità */
+.disponibility {
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 0.25rem 0.5rem;
+  border-radius: 6px;
+  display: inline-block;
+  margin: 0.3rem 0;
+}
+
+/* Stato: Disponibile (Verde) */
+.disponibility.in-stock {
+  background-color: #dcfce7;
+  color: #15803d;
+}
+
+/* Stato: Esaurito (Rosso) */
+.disponibility.out-of-stock {
+  background-color: #fee2e2;
+  color: #b91c1c;
+}
+
+/* Disabilita il pulsante se il prodotto è esaurito */
+.btn-cart:disabled {
+  background-color: #cbd5e1;
+  color: #64748b;
+  cursor: not-allowed;
+  opacity: 0.7;
+}

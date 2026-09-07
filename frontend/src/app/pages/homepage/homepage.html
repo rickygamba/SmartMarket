@@ -8,7 +8,6 @@
         <span class="badge-count">{{ prodottiFiltrati.length }} di {{ prodotti.length }} prodotti</span>
       }
     </div>
-    <p>Scopri gli articoli messi in vendita dalla community di SmartMarket.</p>
   </div>
 
   <!-- BARRA FILTRI -->
@@ -101,18 +100,17 @@
         @for (prod of prodottiFiltrati; track prod.id) {
           <div class="product-card">
 
-            <!-- Sostituisci il blocco card-img-wrapper con questo -->
-<div 
-  class="card-img-wrapper" 
-  [routerLink]="['/prodotto', prod.id]" 
-  style="cursor: pointer;"
->
-  <img
-    [src]="'http://localhost/SmartMarket/uploads/' + prod.img_principale"
-    [alt]="prod.titolo"
-    loading="lazy"
-  >
-              <!-- BADGE IN ALTO A DESTRA SULL'IMMAGINE -->
+            <div 
+              class="card-img-wrapper" 
+              [routerLink]="['/prodotto', prod.id]" 
+              style="cursor: pointer;"
+            >
+              <img
+                [src]="'http://localhost/SmartMarket/uploads/' + prod.img_principale"
+                [alt]="prod.titolo"
+                loading="lazy"
+              >
+
               @if (prod.stato) {
                 <span class="badge-status">
                   {{ prod.stato }}
@@ -132,17 +130,37 @@
               <h3 class="title" [title]="prod.titolo">{{ prod.titolo }}</h3>
               <p class="description">{{ prod.descrizione }}</p>
 
+              <!-- BADGE DISPONIBILITÀ DINAMICO -->
+              @if (prod.quantita > 0) {
+                <span class="disponibility in-stock">
+                  Disponibili: {{ prod.quantita }}
+                </span>
+              } @else {
+                <span class="disponibility out-of-stock">
+                  Esaurito
+                </span>
+              }
+
               <div class="card-footer">
                 <div class="price-container">
                   <span class="currency">€</span>
                   <span class="price-value">{{ prod.prezzo | number:'1.2-2' }}</span>
                 </div>
 
+                <!-- PULSANTE AGGIUNGI CON CONTROLLO MAX DISPONIBILITÀ -->
                 <button 
                   class="btn-cart" 
+                  [disabled]="isMaxRaggiunto(prod)"
                   (click)="aggiungiAlCarrello(prod)"
-                  title="Aggiungi al carrello">
-                  🛒 Aggiungi
+                  [title]="isMaxRaggiunto(prod) ? 'Quantità massima raggiunta' : 'Aggiungi al carrello'">
+                  
+                  @if (prod.quantita <= 0) {
+                    ❌ Esaurito
+                  } @else if (isMaxRaggiunto(prod)) {
+                    ✅ Nel Carrello (Max)
+                  } @else {
+                    🛒 Aggiungi
+                  }
                 </button>
               </div>
             </div>

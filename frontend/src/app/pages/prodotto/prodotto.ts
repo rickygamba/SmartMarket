@@ -2,6 +2,7 @@ import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CommonModule, DecimalPipe } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
+import { CarrelloService } from '../../services/carrello.service';
 
 @Component({
   selector: 'app-prodotto',
@@ -21,7 +22,8 @@ export class Prodotto implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private http: HttpClient,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private carrelloService: CarrelloService
   ) {}
 
   ngOnInit(): void {
@@ -112,7 +114,25 @@ export class Prodotto implements OnInit {
     }
   }
 
+  // --- Gestione Carrello e Quantità Max ---
   aggiungiAlCarrello(): void {
-    console.log('Aggiunto al carrello:', this.prodotto);
+    if (this.prodotto) {
+      this.carrelloService.aggiungiProdotto(this.prodotto);
+      this.cdr.detectChanges();
+    }
+  }
+
+  isMaxRaggiunto(): boolean {
+    if (!this.prodotto) return true;
+    
+    const quantitaMagazzino = Number(this.prodotto.quantita);
+    if (isNaN(quantitaMagazzino) || quantitaMagazzino <= 0) return true;
+
+    const itemInCarrello = this.carrelloService.getInCarrello(this.prodotto.id);
+    if (itemInCarrello) {
+      return itemInCarrello.quantita >= quantitaMagazzino;
+    }
+
+    return false;
   }
 }

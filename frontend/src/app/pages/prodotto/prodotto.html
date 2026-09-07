@@ -67,12 +67,31 @@
           <span class="price">{{ prodotto.prezzo | number:'1.2-2' }}</span>
         </div>
 
+        <!-- BADGE DISPONIBILITÀ -->
+        @if (prodotto.quantita > 0) {
+          <span class="disponibility in-stock">
+            Disponibili: {{ prodotto.quantita }}
+          </span>
+        } @else {
+          <span class="disponibility out-of-stock">
+            Esaurito
+          </span>
+        }
+
         <div class="actions-group">
-          <button class="btn-cart-large" (click)="aggiungiAlCarrello()">
-            🛒 Aggiungi al Carrello
-          </button>
-          <button class="btn-buy-now">
-            ⚡ Acquista Ora
+          <button 
+            class="btn-cart-large" 
+            [disabled]="isMaxRaggiunto()"
+            (click)="aggiungiAlCarrello()"
+            [title]="isMaxRaggiunto() ? 'Quantità massima raggiunta' : 'Aggiungi al carrello'">
+            
+            @if (prodotto.quantita <= 0) {
+              ❌ Esaurito
+            } @else if (isMaxRaggiunto()) {
+              ✅ Nel Carrello (Max)
+            } @else {
+              🛒 Aggiungi al Carrello
+            }
           </button>
         </div>
 
@@ -118,6 +137,10 @@
             <tr>
               <td>Categoria</td>
               <td><strong>{{ prodotto.categoria }}</strong></td>
+            </tr>
+            <tr>
+              <td>Disponibilità</td>
+              <td><strong>{{ prodotto.quantita }} pezzi</strong></td>
             </tr>
             <tr>
               <td>Codice Prodotto</td>
